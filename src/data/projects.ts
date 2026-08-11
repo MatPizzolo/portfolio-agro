@@ -2,9 +2,9 @@
  * Single source of truth for project content. Never hardcode any of this in a
  * component (CLAUDE.md → Prioridades §3).
  *
- * Every project published here is LIVE: there is no roadmap state. The card
- * proves it with its "Probalo" CTA, which is why the content gate requires a
- * demoUrl for every entry before a production deploy.
+ * Every project links its public repo via repoUrl ("Ver código"). demoUrl is
+ * added as each demo deploys: the content gate warns about missing demos but
+ * no longer blocks production — the card simply renders without "Probalo".
  *
  * The FIRST project in the array is the featured parcel (full-width on md+).
  * Names are plain Rioplatense Spanish; technical names live in the repos.
@@ -34,7 +34,7 @@ export type Project = {
   /** Drives the card's legend overline and the CSS-only area filter. */
   area: Area;
   stack: string[];
-  /** Required before production: every card promises "Probalo". */
+  /** Optional until each demo deploys; the card hides "Probalo" without it. */
   demoUrl?: string;
   repoUrl?: string;
 };
@@ -47,9 +47,9 @@ export const projects: Project[] = [
       'Sacale una foto a un yuyo y te dice qué maleza es, desde el celular en el lote. Entrenado con imágenes reales de campo del dataset DeepWeeds.',
     area: 'vision',
     stack: ['FastAPI', 'PyTorch', 'MLflow', 'Docker'],
-    // TODO(mateo): URL de la demo deployada. Sin esto no hay deploy a producción.
+    // TODO(mateo): URL de la demo deployada.
     demoUrl: undefined,
-    repoUrl: undefined,
+    repoUrl: 'https://github.com/MatPizzolo/detector-malezas',
   },
   {
     id: 'monitor-cultivos',
@@ -61,7 +61,7 @@ export const projects: Project[] = [
     stack: ['Sentinel-2', 'Google Earth Engine', 'Next.js'],
     // TODO(mateo): URL de la demo deployada.
     demoUrl: undefined,
-    repoUrl: undefined,
+    repoUrl: 'https://github.com/MatPizzolo/monitor-cultivos-ndvi',
   },
   {
     id: 'mapa-cultivos',
@@ -74,7 +74,7 @@ export const projects: Project[] = [
     stack: ['AlphaEarth', 'Sentinel-2', 'Mapa Nacional de Cultivos'],
     // TODO(mateo): URL de la demo deployada.
     demoUrl: undefined,
-    repoUrl: undefined,
+    repoUrl: 'https://github.com/MatPizzolo/mapa-cultivos',
   },
   {
     id: 'estres-hidrico',
@@ -85,7 +85,7 @@ export const projects: Project[] = [
     stack: ['Sentinel-2', 'Series temporales'],
     // TODO(mateo): URL de la demo deployada.
     demoUrl: undefined,
-    repoUrl: undefined,
+    repoUrl: 'https://github.com/MatPizzolo/alerta-estres-hidrico',
   },
   {
     id: 'pronostico-rindes',
@@ -94,13 +94,13 @@ export const projects: Project[] = [
       'Cuánto va a rendir cada departamento esta campaña, estimado con las estadísticas del MAGyP y Sentinel-2.',
     area: 'prediccion',
     stack: ['MAGyP', 'Sentinel-2', 'Gradient boosting'],
-    // TODO(mateo): URL de la demo deployada.
+    // TODO(mateo): demo y repo cuando el proyecto arranque (Nivel 5 de la escalera).
     demoUrl: undefined,
     repoUrl: undefined,
   },
 ];
 
 // Runs at build (the page is statically prerendered): a production deploy with
-// a card missing its demo, or placeholder text, fails the build instead of
-// reaching the frozen QR URL. Warn-only in local/preview.
+// placeholder text or a malformed URL fails the build instead of reaching the
+// frozen QR URL. Missing demos only warn. Warn-only in local/preview.
 assertProjectContent(projects);

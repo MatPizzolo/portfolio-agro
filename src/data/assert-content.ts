@@ -5,10 +5,10 @@ import { AREAS, type Project } from './projects';
 /**
  * Build-time content gate.
  *
- * Every published project is live and its card promises "Probalo", so the
- * hard invariant is: no project ships without a working demoUrl, and no
- * placeholder text ever reaches the URL the printed QR points to. The page is
- * statically prerendered, so throwing here fails `next build`.
+ * The hard invariant is: no placeholder text or malformed URL ever reaches
+ * the URL the printed QR points to. The page is statically prerendered, so
+ * throwing here fails `next build`. A missing demoUrl is a warning, never a
+ * blocker: the card renders without its "Probalo" CTA until the demo deploys.
  *
  * Strict (throws) on Vercel production deploys, or locally with
  * STRICT_CONTENT=1. Everywhere else it only warns: placeholders are expected
@@ -37,10 +37,6 @@ function violations(projects: readonly Project[]): string[] {
       errors.push(`${at}: rendered text still contains a TODO() placeholder`);
     }
 
-    if (!p.demoUrl) {
-      errors.push(`${at}: missing demoUrl — every published card promises a live demo`);
-    }
-
     if (!(p.area in AREAS)) {
       errors.push(`${at}: unknown area "${p.area}" — add it to AREAS or fix the typo`);
     }
@@ -56,6 +52,13 @@ function violations(projects: readonly Project[]): string[] {
 }
 
 export function assertProjectContent(projects: readonly Project[]): void {
+  const missingDemos = projects.filter((p) => !p.demoUrl).map((p) => p.id);
+  if (missingDemos.length > 0) {
+    console.warn(
+      `[content gate] ${missingDemos.length} card(s) without live demo yet (render without "Probalo"): ${missingDemos.join(', ')}`,
+    );
+  }
+
   const errors = violations(projects);
   if (errors.length === 0) return;
 
