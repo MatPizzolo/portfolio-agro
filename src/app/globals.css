@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/* Design tokens. Canonical hex values live in DESIGN_SYSTEM.md; these are their
+   exact OKLCH equivalents. OKLCH matters here for one reason: the NDVI gradient
+   is the only gradient on the page and sRGB interpolation drags it through a
+   muddy grey. */
+@theme {
+  --color-papel: oklch(96.63% 0.008 98.88); /* #F5F4EE */
+  --color-tinta: oklch(26.01% 0.0155 141.15); /* #20261F */
+  --color-tinta-suave: oklch(48.3% 0.0193 133.97); /* #5A6156 */
+  --color-limite: oklch(83.87% 0.017 121.82); /* #C8CCC0 */
+  --color-cultivo: oklch(52.51% 0.1258 146.38); /* #2F7D3B */
+  --color-cultivo-profundo: oklch(31.89% 0.076 150.72); /* #0C3D1D */
+  --color-rastrojo: oklch(66.44% 0.109 76.83); /* #B98A3E — surface only, 2.82:1 */
+  --color-rastrojo-tinta: oklch(53.21% 0.0961 79.08); /* #8A6520 — ochre text, 4.81:1 */
+  --color-suelo: oklch(91.74% 0.0271 95.36); /* #E9E4D0 */
+  --color-foco: oklch(31.89% 0.076 150.72); /* same value as cultivo-profundo, different role */
+
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-cuerpo: var(--font-rosario), ui-sans-serif, system-ui, sans-serif;
+  --font-datos: var(--font-chivo-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-papel);
+    color: var(--color-tinta);
+    font-family: var(--font-cuerpo);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Required by README §4 and CLAUDE.md. --limite is far too light to serve as
+     a focus ring (1.48:1); --foco lands at 11.20:1. */
+  :focus-visible {
+    outline: 2px solid var(--color-foco);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-suelo);
+    color: var(--color-tinta);
+  }
+}
+
+/* CSS-only area filter (CLAUDE.md → cero 'use client'). The radios live in
+   the .filtro-area fieldset before the grid; :has() on <main> hides the
+   parcels that don't match. "Todas" checked matches no rule → all visible.
+   Hiding via display also restarts the trace animation on re-show, which is
+   the intended "the plan redraws itself" moment. */
+main:has(#area-vision:checked) .parcela:not(.area-vision),
+main:has(#area-satelite:checked) .parcela:not(.area-satelite),
+main:has(#area-prediccion:checked) .parcela:not(.area-prediccion) {
+  display: none;
+}
+
+.filtro-area input:checked + label {
+  background-color: var(--color-tinta);
+  color: var(--color-papel);
+}
+
+.filtro-area input:focus-visible + label {
+  outline: 2px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+@utility ndvi-franja {
+  /* The only gradient on the page, and it carries data: dry soil to dense canopy. */
+  background-image: linear-gradient(
+    to right in oklch,
+    var(--color-suelo),
+    var(--color-cultivo),
+    var(--color-cultivo-profundo)
+  );
+}
+
+/* The single orchestrated moment. The parcel grid itself (the "plan") exists
+   from the first frame: cards keep their opaque paper, so the shared 1px lines
+   never flash over the --limite slab. What gets traced onto the plan, with the
+   60ms stagger, is each parcel's CONTENT — and the NDVI strip draws itself
+   left to right at the end, like data arriving from a pass.
+   clip-path and opacity only: no layout properties, no paint storms.
+   Wrapped in `no-preference` so the resting state of a card is already
+   "visible and still" — reduced-motion never depends on an override arriving
+   in time. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes trazar-franja {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .parcela {
+    --retraso: 0ms;
+  }
+  .parcela:nth-child(2) {
+    --retraso: 60ms;
+  }
+  .parcela:nth-child(3) {
+    --retraso: 120ms;
+  }
+  .parcela:nth-child(4) {
+    --retraso: 180ms;
+  }
+  .parcela:nth-child(5) {
+    --retraso: 240ms;
+  }
+  .parcela:nth-child(6) {
+    --retraso: 300ms;
+  }
+  /* A parcel beyond the six specced ones must never animate before its
+     siblings; it queues after the ladder instead of jumping to 0ms. */
+  .parcela:nth-child(n + 7) {
+    --retraso: 360ms;
+  }
+
+  .parcela > * {
+    animation: aparecer 300ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: var(--retraso);
+  }
+
+  .franja-dibujo {
+    animation: trazar-franja 500ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--retraso) + 180ms);
+  }
+
+  /* Hover re-scan: the strip redraws like a fresh satellite pass. It targets
+     the INNER element on purpose — putting it on .franja-dibujo would replay
+     the entrance animation (delay included) on un-hover. Desktop-only by
+     nature; touch loses nothing. */
+  .parcela:hover .ndvi-franja {
+    animation: trazar-franja 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
