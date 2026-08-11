@@ -21,7 +21,9 @@ export function Hero() {
   return (
     // `isolate` gives the header its own stacking context so the -z-10 raster
     // sits behind the content but can never slip behind the body background.
-    <header className="relative isolate overflow-hidden border-b border-limite">
+    // The masthead rule: 2px full ink, one step above the 1px --limite
+    // hairlines used everywhere else (DESIGN_SYSTEM.md → Jerarquía de reglas).
+    <header className="relative isolate overflow-hidden border-b-2 border-tinta">
       {hasRaster ? (
         <Image
           src="/ndvi-hero.webp"
@@ -34,33 +36,40 @@ export function Hero() {
         />
       ) : null}
 
-      <div className="mx-auto w-full max-w-[1080px] px-5 py-20 sm:py-28">
+      {/* Two columns from md up, baselines meeting at the bottom: the title
+          holds the left, the supporting copy and the telemetry lines stack on
+          the right. That is what keeps the masthead short — stacked, this same
+          content ran nearly twice the height. */}
+      <div className="mx-auto grid w-full max-w-[1080px] gap-8 px-5 pb-10 pt-12 sm:pb-12 sm:pt-16 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:items-end md:gap-12">
         {/* Two-voice lockup: the wide 900 cut against the normal-width 600 cut
             of the same family. The contrast (width + weight + a ≥1.25 scale
             step) is the impact — no extra font bytes, the wdth axis is already
-            paid for. Verify neither line wraps at 390px. */}
+            paid for. Verify neither line wraps at 390px, and that line 1 still
+            fits the left column at 1280px. */}
         <h1 className="font-display leading-[1.08]">
-          <span className="block text-[clamp(2.1rem,8.6vw,4.25rem)] font-black tracking-[-0.02em] [font-stretch:125%]">
+          <span className="block text-[clamp(1.9rem,7.2vw,3.25rem)] font-black tracking-[-0.02em] [font-stretch:125%]">
             Machine Learning
           </span>
-          <span className="block text-[clamp(1.65rem,6.7vw,3.3rem)] font-semibold tracking-[-0.01em] [font-stretch:100%]">
+          <span className="block text-[clamp(1.5rem,5.6vw,2.6rem)] font-semibold tracking-[-0.01em] [font-stretch:100%]">
             para el agro argentino.
           </span>
         </h1>
 
-        <p className="mt-6 max-w-[46ch] text-[1.05rem] text-tinta-suave">
-          Visión por computadora, datos satelitales y sistemas en producción — del modelo al
-          lote.
-        </p>
+        <div>
+          <p className="max-w-[46ch] text-pretty text-[1.05rem] text-tinta-suave">
+            Visión por computadora, datos satelitales y sistemas en producción — del modelo al
+            lote.
+          </p>
 
-        {/* The page belongs to a person: name first, in full ink, in the same
-            telemetry register as the rest of the metadata. */}
-        <p className="mt-10 font-datos text-[0.8rem] uppercase tracking-[0.06em]">
-          {SITE.nombre} · {SITE.rolCorto}
-        </p>
-        <p className="mt-1 font-datos text-[0.8rem] uppercase tracking-[0.06em] text-tinta-suave">
-          {SITE.lugar} · {SITE.coordenadas} · {SITE.evento}
-        </p>
+          {/* The page belongs to a person: name first, in full ink, in the same
+              telemetry register as the rest of the metadata. */}
+          <p className="mt-6 font-datos text-dato uppercase tracking-[0.06em]">
+            {SITE.nombre} · {SITE.rolCorto}
+          </p>
+          <p className="mt-1 font-datos text-dato uppercase tracking-[0.06em] text-tinta-suave">
+            {SITE.lugar} · {SITE.coordenadas}
+          </p>
+        </div>
       </div>
     </header>
   );

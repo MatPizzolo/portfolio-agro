@@ -6,13 +6,13 @@ import { AREAS, type Project } from './projects';
  * Build-time content gate.
  *
  * The hard invariant is: no placeholder text or malformed URL ever reaches
- * the URL the printed QR points to. The page is statically prerendered, so
- * throwing here fails `next build`. A missing demoUrl is a warning, never a
- * blocker: the card renders without its "Probalo" CTA until the demo deploys.
+ * production. The page is statically prerendered, so throwing here fails
+ * `next build`. A missing demoUrl is a warning, never a blocker: the card
+ * renders without its "Probalo" CTA until the demo deploys.
  *
  * Strict (throws) on Vercel production deploys, or locally with
- * STRICT_CONTENT=1. Everywhere else it only warns: placeholders are expected
- * to exist until 2026-08-07 and the daily build must keep passing.
+ * STRICT_CONTENT=1. Everywhere else it only warns, so a work-in-progress
+ * placeholder never breaks the local build.
  */
 
 const TODO_MARKER = /TODO\(/;
@@ -32,7 +32,11 @@ function violations(projects: readonly Project[]): string[] {
   for (const p of projects) {
     const at = `project "${p.id}"`;
 
+    // Everything that reaches the DOM, including the band's caption and the
+    // alt text of a real screenshot.
     const rendered = [p.nombre, p.descripcion, ...p.stack];
+    if (p.imagenNota !== undefined) rendered.push(p.imagenNota);
+    if (p.imagen !== undefined) rendered.push(p.imagen.alt);
     if (rendered.some((s) => TODO_MARKER.test(s))) {
       errors.push(`${at}: rendered text still contains a TODO() placeholder`);
     }
@@ -44,6 +48,17 @@ function violations(projects: readonly Project[]): string[] {
     for (const url of [p.demoUrl, p.repoUrl]) {
       if (url !== undefined && !url.startsWith('https://')) {
         errors.push(`${at}: "${url}" is not an https:// URL`);
+      }
+    }
+
+    // next/image needs a root-relative path, and an empty alt on a content
+    // image would leave a screen reader with nothing to announce.
+    if (p.imagen !== undefined) {
+      if (!p.imagen.src.startsWith('/')) {
+        errors.push(`${at}: imagen.src "${p.imagen.src}" must be a root-relative path`);
+      }
+      if (p.imagen.alt.trim() === '') {
+        errors.push(`${at}: imagen.alt is empty — describe what the screenshot shows`);
       }
     }
   }
@@ -76,8 +91,8 @@ export function assertProjectContent(projects: readonly Project[]): void {
 
 /**
  * The hero raster is a warning, never a blocker: the page is designed to work
- * without it, but shipping the QR without its one act of "mostrar, no afirmar"
- * should not happen silently.
+ * without it, but shipping without its one act of "mostrar, no afirmar" should
+ * not happen silently.
  */
 export function warnIfHeroRasterMissing(): void {
   if (!existsSync(join(process.cwd(), 'public', 'ndvi-hero.webp'))) {

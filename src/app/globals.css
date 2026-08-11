@@ -16,9 +16,17 @@
   --color-suelo: oklch(91.74% 0.0271 95.36); /* #E9E4D0 */
   --color-foco: oklch(31.89% 0.076 150.72); /* same value as cultivo-profundo, different role */
 
+  /* Display and body are the same family on purpose: Archivo is variable, so
+     the body's 400 rides along on bytes the H1 already paid for. */
   --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-cuerpo: var(--font-rosario), ui-sans-serif, system-ui, sans-serif;
+  --font-cuerpo: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-datos: var(--font-chivo-mono), ui-monospace, monospace;
+
+  /* The two mono sizes of the telemetry register. They were repeated inline as
+     arbitrary values in 14 places, which put them outside the scale they are
+     supposed to belong to. */
+  --text-dato: 0.8rem;
+  --text-dato-sm: 0.72rem;
 }
 
 @layer base {
@@ -55,25 +63,30 @@
   }
 }
 
-/* CSS-only area filter (CLAUDE.md → cero 'use client'). The radios live in
-   the .filtro-area fieldset before the grid; :has() on <main> hides the
-   parcels that don't match. "Todas" checked matches no rule → all visible.
-   Hiding via display also restarts the trace animation on re-show, which is
-   the intended "the plan redraws itself" moment. */
-main:has(#area-vision:checked) .parcela:not(.area-vision),
-main:has(#area-satelite:checked) .parcela:not(.area-satelite),
-main:has(#area-prediccion:checked) .parcela:not(.area-prediccion) {
-  display: none;
+/* An empty cell would expose the --limite slab as a solid block, because the
+   shared hairlines are the container showing through a 1px gap. The last
+   parcel spans both columns whenever the count would leave a hole: the
+   featured parcel already takes a full row, so the remainder is odd exactly
+   when the total is even. */
+@media (width >= 48rem) {
+  .parcela:last-child:nth-child(even) {
+    grid-column: span 2;
+  }
 }
 
-.filtro-area input:checked + label {
-  background-color: var(--color-tinta);
-  color: var(--color-papel);
-}
-
-.filtro-area input:focus-visible + label {
-  outline: 2px solid var(--color-foco);
-  outline-offset: 2px;
+/* Stand-in for a project's band until a real screenshot exists. Diagonal
+   hatching in paper and hairline — deliberately NOT --suelo, which is the
+   first stop of the NDVI ramp directly below it and made the strip's left half
+   disappear into the band. Zero bytes, zero requests, and it reads as "nothing
+   here yet" rather than as a broken image. The mono caption must be --tinta:
+   14.03:1 over --papel and 7.05:1 over --limite, both AA, while --tinta-suave
+   would fall to ~3.9:1 and fail. */
+@utility banda-placeholder {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-papel) 0 9px,
+    var(--color-limite) 9px 18px
+  );
 }
 
 @utility ndvi-franja {
@@ -90,7 +103,8 @@ main:has(#area-prediccion:checked) .parcela:not(.area-prediccion) {
    from the first frame: cards keep their opaque paper, so the shared 1px lines
    never flash over the --limite slab. What gets traced onto the plan, with the
    60ms stagger, is each parcel's CONTENT — and the NDVI strip draws itself
-   left to right at the end, like data arriving from a pass.
+   left to right at the end, like data arriving from a pass. One echo remains:
+   hovering a parcel re-scans its strip.
    clip-path and opacity only: no layout properties, no paint storms.
    Wrapped in `no-preference` so the resting state of a card is already
    "visible and still" — reduced-motion never depends on an override arriving

@@ -27,25 +27,31 @@ Se declaran en `@theme` dentro de `globals.css` (Tailwind v4), en OKLCH. Los hex
 
 ## Tipografía
 
-Las tres familias son de **Omnibus-Type**, fundición argentina. El detalle es intencional.
+Tres roles, **dos familias**, las dos de **Omnibus-Type**, fundición argentina. El detalle es intencional.
 
 - **Display:** Archivo Expanded 700-900 — H1 y nombres de proyecto
-- **Cuerpo:** Rosario 400/600 — todo el texto corrido
-- **Datos:** Chivo Mono 400/500 — metadata, chips, coordenadas
+- **Cuerpo:** Archivo 400 — todo el texto corrido
+- **Datos:** Chivo Mono 400/500 — metadata, chips, coordenadas, marcadores de sección
 
-Chivo Mono se eligió por sobre IBM Plex Mono para completar el argumento de la fundición y evitar la mono técnica más vista de Google Fonts.
+Display y cuerpo comparten familia por peso, no por gusto: Archivo ya se carga como variable con el eje `wdth`, así que el cuerpo no cuesta bytes extra. Chivo Mono se eligió por sobre IBM Plex Mono para completar el argumento de la fundición y evitar la mono técnica más vista de Google Fonts.
 
 ## Forma
 
 `border-radius: 0` global. **Cero `box-shadow` en toda la página**: los planos no tienen sombras, tienen líneas. Jerarquía por borde, peso tipográfico y espacio. Grilla base de 8px, contenedor máx. 1080px.
 
+Dos niveles de línea y no hay un tercero: hairline `1px --limite` para todo, y masthead `2px --tinta` solo para los dos cortes estructurales (bajo el hero, sobre el contacto).
+
 ## Signature
 
-La **card-parcela**: cada proyecto es una parcela de un plano catastral, con nombre en criollo y una franja NDVI llena de 4px al pie como firma de la página. Todos los proyectos publicados están live: la card no declara estado, lo demuestra con su `▶ Probalo`. En ≥768px las cards forman una grilla catastral de 2 columnas con bordes compartidos de 1px (la primera parcela, destacada, ocupa las dos columnas), no cards flotantes con gap.
+La **card-parcela**: cada proyecto es una parcela de un plano catastral. La encabeza una banda de alto fijo (200/220px) con el screenshot real de la demo —o un rayado diagonal de 96px, deliberadamente más chico, mientras no exista—, y la franja NDVI de 4px cuelga del borde inferior de esa banda como firma de la página y leyenda de su propio mapa. Debajo, swatch de área, nombre en criollo, descripción, chips y un par de CTAs de igual peso de 48px. La card no declara estado: lo demuestra con su `▶ Probalo`, que solo aparece si hay `demoUrl`. En ≥768px las cards forman una grilla catastral de 2 columnas con bordes compartidos de 1px (la primera parcela, destacada, ocupa las dos columnas), no cards flotantes con gap.
 
 ## Motion
 
 Un solo momento: al cargar, las parcelas se "dibujan" con stagger de 60ms. CSS puro, sin JS ni librerías. Nada más, salvo transiciones de color en hover. Sin scroll-triggers, sin parallax.
+
+## Jerarquía
+
+Exactamente **un** botón relleno verde visible en toda la página. Hoy es el mail del footer, porque ningún proyecto tiene `demoUrl` y sin eso la página no tendría ninguna acción primaria. El verde es el mecanismo de ranking: si desaparece, la jerarquía no se degrada, se apaga.
 
 ## Restricciones que mandan sobre cualquier default
 

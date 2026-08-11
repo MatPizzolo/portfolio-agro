@@ -1,12 +1,11 @@
 /**
  * Single source of truth for the production URL and contact details.
  *
- * The printed QR captures SITE_URL and nothing else. Once it goes to print on
- * 2026-08-09 this value is immutable, so it must be final by 2026-08-08.
- * See README.md → Deploy y dominio.
+ * SITE_URL lives here and nowhere else: metadataBase, the OpenGraph URL and any
+ * absolute link all derive from it. See README.md → Deploy.
  */
 
-// TODO(mateo): dominio de produccion sin definir. Congelar antes del 2026-08-08.
+// TODO(mateo): dominio de produccion sin definir.
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mateopizzolo.vercel.app';
 
 export const SITE = {
@@ -15,11 +14,12 @@ export const SITE = {
   /** Hero identity line: the H1 already says the domain, so the role drops it. */
   rolCorto: 'ML Engineer',
   titulo: 'Mateo Pizzolo — Machine Learning para el agro argentino',
+  // No afirma cuántos proyectos están andando: eso depende de los demoUrl y se
+  // deriva en la página (PRODUCT.md → mostrar, no afirmar).
   descripcion:
-    'Visión por computadora, datos satelitales y sistemas en producción aplicados al agro argentino. Cinco proyectos andando ahora.',
+    'Visión por computadora, datos satelitales y sistemas en producción aplicados al agro argentino.',
   lugar: 'BUENOS AIRES, AR',
   coordenadas: '34.6°S 58.4°O',
-  evento: 'AGTECH WEEK 2026',
 } as const;
 
 // TODO(mateo): confirmar el perfil de LinkedIn y el mail que se muestran.

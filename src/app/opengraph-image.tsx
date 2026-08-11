@@ -2,8 +2,8 @@ import { ImageResponse } from 'next/og';
 import { SITE } from '@/lib/site';
 
 /**
- * Share preview for the QR page (WhatsApp/LinkedIn are how the URL travels
- * after the fair). Generated at build time; ships zero client JS.
+ * Share preview (WhatsApp and LinkedIn are how the URL travels). Generated at
+ * build time; ships zero client JS.
  *
  * Satori only interpolates gradients in sRGB, which drags the NDVI ramp
  * through grey — so the stops below are precomputed in OKLab from the
@@ -78,7 +78,7 @@ export default async function OpengraphImage() {
             padding: '56px 64px 48px',
           }}
         >
-          <div style={mono}>{`${SITE.evento} · ${SITE.lugar} · ${SITE.coordenadas}`}</div>
+          <div style={mono}>{`${SITE.lugar} · ${SITE.coordenadas}`}</div>
           <div
             style={{
               fontFamily: archivo ? 'Archivo' : 'sans-serif',

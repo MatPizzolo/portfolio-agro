@@ -1,6 +1,6 @@
 # Proyectos avanzados — roadmap fuera de la página
 
-Cuatro proyectos para construir después de AgTech Week. **No aparecen en la página del QR**: la página solo publica proyectos con demo andando. Cada uno tiene su criterio de entrada al final.
+Cuatro proyectos para construir más adelante. **No aparecen en la página**: solo se publican proyectos con demo andando. Cada uno tiene su criterio de entrada al final.
 
 Regla general (la misma de `projects.ts`): cuando la demo esté deployada, el proyecto entra al array con su `area`, y si el área es nueva se suma a `AREAS` — el filtro la levanta solo. Sin métricas inventadas en ningún texto: los números aparecen cuando existan mediciones reales.
 
@@ -72,7 +72,7 @@ Regla general (la misma de `projects.ts`): cuando la demo esté deployada, el pr
 
 ## Orden sugerido
 
-1. **Detector sin señal** — reusa todo lo que ya existe, y "probalo en modo avión" es la mejor demo de feria imaginable.
+1. **Detector sin señal** — reusa todo lo que ya existe, y "probalo en modo avión" es la mejor demo en vivo imaginable.
 2. **Alerta de heladas** — datos 100% públicos, cero dependencia de terceros, y resuelve un dolor que cualquier productor nombra solo.
 3. **Conteo con drone** — necesita conseguir imágenes de vuelo; el pipeline arranca con GWHD mientras tanto.
 4. **Asistente de fitosanitarios** — el de mayor superficie de riesgo (regulatorio + alucinaciones); conviene encararlo con los otros ya andando.

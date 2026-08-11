@@ -1,14 +1,16 @@
 import type { Metadata, Viewport } from 'next';
-import { Archivo, Chivo_Mono, Rosario } from 'next/font/google';
+import { Archivo, Chivo_Mono } from 'next/font/google';
 import { SITE, SITE_URL } from '@/lib/site';
 import './globals.css';
 
 /**
- * All three families are Omnibus-Type, an Argentine foundry. That is the point:
+ * Two families, both Omnibus-Type, an Argentine foundry. That is the point:
  * even the type comes from the country the work is about.
  *
- * Only Archivo is preloaded — it renders the H1, which is the LCP element. The
- * other two are swap-only so they never block first paint on bad 4G.
+ * Archivo carries display AND body — it is a variable font, so the 400 weight
+ * the body needs costs nothing on top of the display cuts already loaded. Only
+ * Archivo is preloaded: it renders the H1, which is the LCP element. Chivo Mono
+ * is swap-only so it never blocks first paint on bad 4G.
  */
 // The `wdth` axis is what makes Expanded possible, and it is the single most
 // expensive thing on the page: 88.0 KB with it, 34.1 KB without. Kept on
@@ -20,13 +22,6 @@ const archivo = Archivo({
   display: 'swap',
   preload: true,
   variable: '--font-archivo',
-});
-
-const rosario = Rosario({
-  subsets: ['latin'],
-  display: 'swap',
-  preload: false,
-  variable: '--font-rosario',
 });
 
 const chivoMono = Chivo_Mono({
@@ -66,10 +61,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="es-AR"
-      className={`${archivo.variable} ${rosario.variable} ${chivoMono.variable}`}
-    >
+    <html lang="es-AR" className={`${archivo.variable} ${chivoMono.variable}`}>
       <body>{children}</body>
     </html>
   );
