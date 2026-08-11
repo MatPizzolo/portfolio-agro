@@ -16,3 +16,4 @@ next-env.d.ts
 *.pem
 npm-debug.log*
 pnpm-debug.log*
+.vercel

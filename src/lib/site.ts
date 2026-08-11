@@ -5,7 +5,9 @@
  * absolute link all derive from it. See README.md → Deploy.
  */
 
-// TODO(mateo): dominio de produccion sin definir.
+// Production domain: the Vercel project is named `mateopizzolo`, so the
+// fallback is the real URL; NEXT_PUBLIC_SITE_URL overrides it if a custom
+// domain ever lands.
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mateopizzolo.vercel.app';
 
 export const SITE = {

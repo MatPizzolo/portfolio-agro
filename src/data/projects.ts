@@ -56,8 +56,7 @@ export const projects: Project[] = [
     area: 'vision',
     stack: ['FastAPI', 'PyTorch', 'MLflow', 'Docker'],
     imagenNota: 'Foto de un yuyo con la especie detectada',
-    // TODO(mateo): URL de la demo deployada.
-    demoUrl: undefined,
+    demoUrl: 'https://detector-malezas.vercel.app',
     repoUrl: 'https://github.com/MatPizzolo/detector-malezas',
   },
   {
@@ -69,8 +68,7 @@ export const projects: Project[] = [
     area: 'satelite',
     stack: ['Sentinel-2', 'Google Earth Engine', 'Next.js'],
     imagenNota: 'Mapa NDVI de un lote, campaña a campaña',
-    // TODO(mateo): URL de la demo deployada.
-    demoUrl: undefined,
+    demoUrl: 'https://monitor-cultivos-ndvi.vercel.app',
     repoUrl: 'https://github.com/MatPizzolo/monitor-cultivos-ndvi',
   },
   {
@@ -83,8 +81,7 @@ export const projects: Project[] = [
     // reading "INTA" listed as a technology would flag it as sloppy.
     stack: ['AlphaEarth', 'Sentinel-2', 'Mapa Nacional de Cultivos'],
     imagenNota: 'Lotes de la zona núcleo por cultivo',
-    // TODO(mateo): URL de la demo deployada.
-    demoUrl: undefined,
+    demoUrl: 'https://mapa-cultivos.vercel.app',
     repoUrl: 'https://github.com/MatPizzolo/mapa-cultivos',
   },
   // Sits before "Alerta de estrés hídrico" on purpose: it is the only project
